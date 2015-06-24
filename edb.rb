@@ -17,6 +17,19 @@ module EDB
     end
   end
 
+  module Logger
+    class << self
+      def log(level, message)
+        case level
+        when :error
+          puts "Error: #{message}"
+        else
+          puts message
+        end
+      end
+    end
+  end
+
   module DBMS
     class << self
       def supports?(dbms)
@@ -47,12 +60,12 @@ module EDB
           cluster: File.join(dir_name, 'cluster.sql')
         }
 
+        ::EDB::Logger.log(:info, "Dumping #{db[:database]}...")
         pg_dump = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dump') : 'pg_dump'
-        puts "Dumping #{db[:name]}..."
         system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{db[:database]}"
 
+        ::EDB::Logger.log(:info, 'Dumping the cluster...')
         pg_dumpall = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dumpall') : 'pg_dumpall'
-        puts 'Dumping the cluster...'
         system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
 
         files.values
@@ -76,13 +89,14 @@ module EDB
     module AES_256_CBC
       class << self
         def encrypt(source)
-          p "encrypting #{source}"; return
+          ::EDB::Logger.log(:info, "Encrypting #{source}...")
 
           cipher = OpenSSL::Cipher.new('AES-256-CBC')
           cipher.encrypt
           cipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
 
           contents = File.read(source)
+          raise "Cannot encrypt #{source}: It's empty" if contents.empty?
           File.open(source, 'wb') do |file|
             ciphered_content = cipher.update(contents) + cipher.final
             file.write(ciphered_content)
@@ -108,7 +122,7 @@ module EDB
     module S3
       class << self
         def upload(source)
-          p "uploading #{source}"; return
+          ::EDB::Logger.log(:info, "Uploading #{source}...")
 
           aws = ::EDB.opts[:STORAGE][:S3]
           AWS.config(aws)
@@ -151,7 +165,7 @@ module EDB
             end
           end
         else
-          puts "No support for #{dbms_name}."
+          ::EDB::Logger.log(:error, "No support for #{dbms_name}.")
         end
       end
     end
