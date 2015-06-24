@@ -1,4 +1,4 @@
-# Backup, encrypt and send to S3 your PostgreSQL database
+# Backup, encrypt and manage your backups
 
 *EDB* aims to be a framework to make and manage backups of your database.
 It is composed by three macro areas that reflect themself inside the `secrets.yml` and are *DB*, *CRYPTOGRAPHY* and *STORAGE*.
