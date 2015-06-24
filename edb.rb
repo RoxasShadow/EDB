@@ -1,6 +1,8 @@
+gem 'aws-sdk', '=1.59.1'
+require 'aws-sdk'
+
 require 'yaml'
 require 'openssl'
-require 'aws-sdk'
 
 module EDB
   VERSION = '0.1'
