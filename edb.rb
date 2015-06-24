@@ -43,15 +43,17 @@ module EDB
       def self.backup(dir_name)
         db    = ::EDB.opts[:DB][:PostgreSQL]
         files = {
-          dump:    File.join(dir_name, "#{db[:name]}.sql"),
+          dump:    File.join(dir_name, "#{db[:database]}.sql"),
           cluster: File.join(dir_name, 'cluster.sql')
         }
 
+        pg_dump = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dump') : 'pg_dump'
         puts "Dumping #{db[:name]}..."
-        # system "PGPASSWORD='#{db[:pass]}' pg_dump -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{db[:name]}"
+        system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{db[:database]}"
 
+        pg_dumpall = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dumpall') : 'pg_dumpall'
         puts 'Dumping the cluster...'
-        # system "PGPASSWORD='#{db[:pass]}' pg_dumpall -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
+        system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
 
         files.values
       end
@@ -157,7 +159,7 @@ module EDB
     private
     def create_dir
       @dir_name = PATTERN.call(Time.now)
-      # Dir.mkdir(@dir_name) unless Dir.exists?(@dir_name)
+      Dir.mkdir(@dir_name) unless Dir.exists?(@dir_name)
     end
   end
 end
