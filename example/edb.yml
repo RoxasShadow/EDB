@@ -1,0 +1,22 @@
+---
+:CRYPTOGRAPHY:
+  :AES_256_CBC:
+    :secret: 0279x62O116Hn50016AGJE6D5De4gn4r
+
+:STORAGE:
+  :S3:
+    :access_key_id: ''
+    :secret_access_key: ''
+    :region: eu-west-1
+    :bucket:
+      :main: backups
+      :folder: sample-project
+
+:DB:
+  :PostgreSQL:
+    :binpath: '/Applications/Postgres.app/Contents/Versions/9.3/bin/'
+    :username: example
+    :password: 'pa$$w0rd'
+    :database: 'sample_database'
+    :host: localhost
+    :port: 5432
