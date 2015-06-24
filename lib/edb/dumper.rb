@@ -33,7 +33,7 @@ module EDB
     def run
       create_dir
 
-      ::EDB.opts[:DB].each do |dbms|
+      ::EDB.opts[:DBMS].each do |dbms|
         dbms_name = dbms[0]
 
         if EDB::DBMS.supports?(dbms_name)
