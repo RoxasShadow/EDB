@@ -1,7 +1,6 @@
 ---
 :DBMS:
   :PostgreSQL:
-    :binpath: '/Applications/Postgres.app/Contents/Versions/9.3/bin/'
     :username: example
     :password: 'pa$$w0rd'
     :database: 'sample_database'
