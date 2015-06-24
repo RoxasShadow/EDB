@@ -1,4 +1,4 @@
-# Backup, encrypt and manage your backups
+# Backup, encrypt and manage your database
 
 *EDB* aims to be a framework to make and manage backups of your database.
 It is composed by three macro areas that reflect themself inside the `secrets.yml` and are *DB*, *CRYPTOGRAPHY* and *STORAGE*.
