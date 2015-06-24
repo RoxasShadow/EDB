@@ -27,7 +27,7 @@ module EDB
     module PostgreSQL
       class << self
         def backup(dir_name)
-          db    = ::EDB.opts[:DB][:PostgreSQL]
+          db    = ::EDB.opts[:DBMS][:PostgreSQL]
           files = {
             dump:    File.join(dir_name, "#{db[:database]}.sql"),
             cluster: File.join(dir_name, 'cluster.sql')
