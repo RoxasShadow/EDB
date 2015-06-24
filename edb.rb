@@ -80,6 +80,11 @@ module EDB
         this_module.encrypt(file)
       end
 
+      def decrypt(method, file)
+        this_module = to_module(method)
+        this_module.decrypt(file)
+      end
+
       private
       def to_module(method)
         Object.const_get("::EDB::Cryptography::#{method}")
@@ -97,9 +102,27 @@ module EDB
 
           contents = File.read(source)
           raise "Cannot encrypt #{source}: It's empty" if contents.empty?
+
           File.open(source, 'wb') do |file|
             ciphered_content = cipher.update(contents) + cipher.final
             file.write(ciphered_content)
+          end
+        end
+
+        def decrypt(source, new_file = true)
+          ::EDB::Logger.log(:info, "Decrypting #{source}...")
+
+          decipher = OpenSSL::Cipher.new('AES-256-CBC')
+          decipher.decrypt
+          decipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
+
+          contents = File.read(source)
+          raise "Cannot decrypt #{source}: It's empty" if contents.empty?
+
+          new_source = new_file ? "#{source}.dec" : source
+          File.open(new_source, 'wb') do |file|
+            deciphered_content = decipher.update(contents) + decipher.final
+            file.write(deciphered_content)
           end
         end
       end
