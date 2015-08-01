@@ -18,5 +18,5 @@ Consider also to add *EDB* to your cronjobs.
 
 ## Available modules
 - *Cryptography*: `AES_256_CBC`
-- *DBMS*:         `PostgreSQL`
+- *DBMS*:         `PostgreSQL`, `MySQL`
 - *Storage*:      `S3`, `Filesystem`
