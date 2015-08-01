@@ -21,24 +21,24 @@
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Giovanni Capuano.
 #++
-gem 'aws-sdk', '=1.59.1'
-require 'aws-sdk'
+require 'fileutils'
 
 module EDB
   module Storage
-    module S3
+    module Filesystem
       class << self
         def upload(source)
-          ::EDB::Logger.log(:info, "Uploading #{source} to S3...")
+          filesystem = ::EDB.opts[:STORAGE][:Filesystem]
 
-          aws = ::EDB.opts[:STORAGE][:S3]
-          AWS.config(aws)
+          path   = File.expand_path(filesystem[:path])
+          folder = source.split('/').first
+          path   = File.join(path, folder)
+          ::EDB::Logger.log(:info, "Copying #{source} to #{path}...")
 
-          target = File.join(aws[:bucket][:folder], source)
+          Dir.mkdir(path) unless File.directory?(path)
+
           source = File.join('./', source)
-
-          bucket = AWS::S3.new.buckets[aws[:bucket][:main]]
-          bucket.objects.create(target, Pathname.new(source))
+          FileUtils.mv(source, path)
         end
       end
     end

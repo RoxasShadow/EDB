@@ -1,7 +1,8 @@
 ---
 :DBMS:
   :PostgreSQL:
-    :username: example
+    :binpath: /Applications/Postgres.app/Contents/Versions/9.3/bin
+    :username: username
     :password: password
     :database: sample_database
     :host: localhost
@@ -12,6 +13,9 @@
     :secret: 0279x62O116Hn50016AGJE6D5De4gn4r
 
 :STORAGE:
+  :Filesystem:
+    :path: ~/Downloads
+
   :S3:
     :access_key_id: ''
     :secret_access_key: ''
