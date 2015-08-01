@@ -35,10 +35,10 @@ module EDB
           path   = File.join(path, folder)
           ::EDB::Logger.log(:info, "Copying #{source} to #{path}...")
 
-          Dir.mkdir(path) unless File.directory?(path)
+          Dir.mkdir(path) unless Dir.exists?(path)
 
           source = File.join('./', source)
-          FileUtils.mv(source, path)
+          FileUtils.cp_r(source, path)
         end
       end
     end
