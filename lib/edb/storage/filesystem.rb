@@ -31,11 +31,11 @@ module EDB
           filesystem = ::EDB.opts[:STORAGE][:Filesystem]
 
           path   = File.expand_path(filesystem[:path])
-          folder = source.split('/').first
+          folder = source.split('/')[0..-2].join('/')
           path   = File.join(path, folder)
           ::EDB::Logger.log(:info, "Copying #{source} to #{path}...")
 
-          Dir.mkdir(path) unless Dir.exists?(path)
+          FileUtils.mkdir_p(path) unless Dir.exists?(path)
 
           source = File.join('./', source)
           FileUtils.cp_r(source, path)

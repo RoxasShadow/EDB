@@ -37,7 +37,10 @@ module EDB
         dbms_name = dbms[0]
 
         if EDB::DBMS.supports?(dbms_name)
-          files = EDB::DBMS.backup(dbms_name, @dir_name)
+          dir_name = File.join(@dir_name, dbms_name.to_s)
+          FileUtils.mkdir(dir_name) unless Dir.exists?(dir_name)
+
+          files = EDB::DBMS.backup(dbms_name, dir_name)
 
           if ::EDB.opts[:CRYPTOGRAPHY]
             ::EDB.opts[:CRYPTOGRAPHY].each do |method|
