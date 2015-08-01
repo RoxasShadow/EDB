@@ -2,8 +2,8 @@
 :DBMS:
   :PostgreSQL:
     :username: example
-    :password: 'pa$$w0rd'
-    :database: 'sample_database'
+    :password: password
+    :database: sample_database
     :host: localhost
     :port: 5432
 
