@@ -15,6 +15,8 @@
     :database: sample_database
     :host: localhost
 
+  :MongoDB:
+
 :CRYPTOGRAPHY:
   :AES_256_CBC:
     :secret: 0279x62O116Hn50016AGJE6D5De4gn4r
