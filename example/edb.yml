@@ -8,14 +8,18 @@
     :host: localhost
     :port: 5432
 
+  :MySQL:
+    :binpath: /Applications/MAMP/Library/bin
+    :username: username
+    :password: password
+    :database: sample_database
+    :host: localhost
+
 :CRYPTOGRAPHY:
   :AES_256_CBC:
     :secret: 0279x62O116Hn50016AGJE6D5De4gn4r
 
 :STORAGE:
-  :Filesystem:
-    :path: ~/Downloads
-
   :S3:
     :access_key_id: ''
     :secret_access_key: ''
@@ -23,3 +27,6 @@
     :bucket:
       :main: backups
       :folder: sample-project
+
+  :Filesystem:
+    :path: ~/Downloads
