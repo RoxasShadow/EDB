@@ -25,8 +25,8 @@
     :secret_access_key: ''
     :region: eu-west-1
     :bucket:
-      :main: backups
-      :folder: sample-project
+      :name: my-bucket-name
+      :subfolder: backups
 
   :Filesystem:
     :path: ~/Downloads

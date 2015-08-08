@@ -34,10 +34,10 @@ module EDB
           aws = ::EDB.opts[:STORAGE][:S3]
           AWS.config(aws)
 
-          target = File.join(aws[:bucket][:folder], source)
+          target = File.join(aws[:bucket][:subfolder], source)
           source = File.join('./', source)
 
-          bucket = AWS::S3.new.buckets[aws[:bucket][:main]]
+          bucket = AWS::S3.new.buckets[aws[:bucket][:name]]
           bucket.objects.create(target, Pathname.new(source))
         end
       end
