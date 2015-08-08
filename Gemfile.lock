@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    edb (0.1)
+    edb (0.2)
       aws-sdk (= 1.59.1)
 
 GEM
@@ -22,3 +22,6 @@ PLATFORMS
 
 DEPENDENCIES
   edb!
+
+BUNDLED WITH
+   1.10.4
