@@ -36,25 +36,38 @@ module EDB
       ::EDB.opts[:DBMS].each do |dbms|
         dbms_name = dbms[0]
 
-        if EDB::DBMS.supports?(dbms_name)
-          dir_name = File.join(@dir_name, dbms_name.to_s)
-          FileUtils.mkdir(dir_name) unless Dir.exists?(dir_name)
+        unless EDB::DBMS.supports?(dbms_name)
+          module_not_supported(dbms_name)
+          next
+        end
 
-          files = EDB::DBMS.backup(dbms_name, dir_name)
+        dir_name = File.join(@dir_name, dbms_name.to_s)
+        FileUtils.mkdir(dir_name) unless Dir.exists?(dir_name)
 
-          if ::EDB.opts[:CRYPTOGRAPHY]
-            ::EDB.opts[:CRYPTOGRAPHY].each do |method|
-              files.each { |file| ::EDB::Cryptography.encrypt(method[0], file) }
+        files = EDB::DBMS.backup(dbms_name, dir_name)
+
+        if ::EDB.opts[:CRYPTOGRAPHY]
+          ::EDB.opts[:CRYPTOGRAPHY].each do |cryptography|
+            algorithm = cryptography[0]
+
+            if ::EDB::Cryptography.supports?(algorithm)
+              files.each { |file| ::EDB::Cryptography.encrypt(algorithm, file) }
+            else
+              module_not_supported(algorithm)
             end
           end
+        end
 
-          if ::EDB.opts[:STORAGE]
-            ::EDB.opts[:STORAGE].each do |service|
-              files.each { |file| ::EDB::Storage.upload(service[0], file) }
+        if ::EDB.opts[:STORAGE]
+          ::EDB.opts[:STORAGE].each do |storage|
+            service = storage[0]
+
+            if ::EDB::Cryptography.supports?(crypto)
+              files.each { |file| ::EDB::Storage.upload(service, file) }
+            else
+              module_not_supported(service)
             end
           end
-        else
-          ::EDB::Logger.log(:error, "No support for #{dbms_name}.")
         end
       end
     end
@@ -63,6 +76,10 @@ module EDB
     def create_dir
       @dir_name = PATTERN.call(Time.now)
       Dir.mkdir(@dir_name) unless Dir.exists?(@dir_name)
+    end
+
+    def module_not_supported(module_name)
+      ::EDB::Logger.log(:error, "No support for #{algorithm}.")
     end
   end
 end

@@ -26,10 +26,7 @@ Dir[File.dirname(__FILE__) + '/dbms/*.rb'].each { |file| require file }
 module EDB
   module DBMS
     class << self
-      def supports?(dbms)
-        this_module = to_module(dbms)
-        all_modules.include?(this_module)
-      end
+      include ::EDB::IsModuleSupported
 
       def backup(dbms, *args)
         this_module = to_module(dbms)
@@ -39,10 +36,6 @@ module EDB
       private
       def to_module(dbms)
         Object.const_get("::EDB::DBMS::#{dbms}")
-      end
-
-      def all_modules
-        constants.select { |c| const_get(c).is_a?(Module) }.map { |c| const_get(c) }
       end
     end
   end

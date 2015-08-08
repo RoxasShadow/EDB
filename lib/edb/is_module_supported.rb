@@ -21,22 +21,21 @@
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Giovanni Capuano.
 #++
-Dir[File.dirname(__FILE__) + '/storage/*.rb'].each { |file| require file }
 
 module EDB
-  module Storage
-    class << self
-      include ::EDB::IsModuleSupported
-
-      def upload(service, source)
-        this_module = to_module(service)
-        this_module.upload(source)
+  module IsModuleSupported
+    def supports?(dbms)
+      begin
+        this_module = to_module(dbms)
+        all_modules.include?(this_module)
+      rescue NameError
+        false
       end
+    end
 
-      private
-      def to_module(service)
-        Object.const_get("::EDB::Storage::#{service}")
-      end
+    private
+    def all_modules
+      constants.select { |c| const_get(c).is_a?(Module) }.map { |c| const_get(c) }
     end
   end
 end

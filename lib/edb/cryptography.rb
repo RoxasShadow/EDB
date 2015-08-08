@@ -26,6 +26,8 @@ Dir[File.dirname(__FILE__) + '/cryptography/*.rb'].each { |file| require file }
 module EDB
   module Cryptography
     class << self
+      include ::EDB::IsModuleSupported
+
       def encrypt(method, file)
         this_module = to_module(method)
         this_module.encrypt(file)

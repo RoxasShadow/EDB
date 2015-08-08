@@ -24,6 +24,7 @@
 require 'edb/edb'
 require 'edb/logger'
 require 'edb/dumper'
+require 'edb/is_module_supported'
 
 require 'edb/dbms'
 require 'edb/cryptography'
