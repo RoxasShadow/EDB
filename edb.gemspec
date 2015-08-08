@@ -16,4 +16,7 @@ Gem::Specification.new { |s|
   s.require_paths = ['lib']
 
   s.add_dependency 'aws-sdk', '1.59.1'
+
+  s.add_development_dependency 'rspec',   '~> 3.3'
+  s.add_development_dependency 'bundler', '~> 1.10'
 }

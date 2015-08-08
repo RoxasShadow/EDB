@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    edb (0.2)
+    edb (0.2.2)
       aws-sdk (= 1.59.1)
 
 GEM
@@ -12,16 +12,32 @@ GEM
     aws-sdk-v1 (1.59.1)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
+    diff-lcs (1.2.5)
     json (1.8.3)
     mini_portile (0.6.2)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
+    rspec (3.3.0)
+      rspec-core (~> 3.3.0)
+      rspec-expectations (~> 3.3.0)
+      rspec-mocks (~> 3.3.0)
+    rspec-core (3.3.2)
+      rspec-support (~> 3.3.0)
+    rspec-expectations (3.3.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.3.0)
+    rspec-mocks (3.3.2)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.3.0)
+    rspec-support (3.3.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler (~> 1.10)
   edb!
+  rspec (~> 3.3)
 
 BUNDLED WITH
    1.10.4
