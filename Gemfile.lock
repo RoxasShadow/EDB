@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    edb (0.3)
+    edb (0.3.1)
       aws-sdk (= 1.59.1)
 
 GEM
