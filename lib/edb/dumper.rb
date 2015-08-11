@@ -46,7 +46,7 @@ module EDB
 
         files = EDB::DBMS.backup(dbms_name, dir_name)
 
-        if ::EDB.opts[:CRYPTOGRAPHY]
+        if ::EDB.opts[:CRYPTOGRAPHY] != nil
           ::EDB.opts[:CRYPTOGRAPHY].each do |cryptography|
             algorithm = cryptography[0]
 
@@ -58,11 +58,11 @@ module EDB
           end
         end
 
-        if ::EDB.opts[:STORAGE]
+        if ::EDB.opts[:STORAGE] != nil
           ::EDB.opts[:STORAGE].each do |storage|
             service = storage[0]
 
-            if ::EDB::Cryptography.supports?(crypto)
+            if ::EDB::Storage.supports?(service)
               files.each { |file| ::EDB::Storage.upload(service, file) }
             else
               module_not_supported(service)
@@ -79,7 +79,7 @@ module EDB
     end
 
     def module_not_supported(module_name)
-      ::EDB::Logger.log(:error, "No support for #{algorithm}.")
+      ::EDB::Logger.log(:error, "No support for #{module_name}.")
     end
   end
 end
