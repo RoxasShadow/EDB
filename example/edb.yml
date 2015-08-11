@@ -30,3 +30,9 @@
 
   :Filesystem:
     :path: ~/Downloads
+
+  :FTP:
+    :host: ftp.example.xyz
+    :username: username
+    :password: password
+    :path: /home/username/
