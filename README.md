@@ -17,12 +17,12 @@ Consider also to add *EDB* to your cronjobs.
 ## Available modules
 - *Cryptography*: `AES_256_CBC`
 - *DBMS*:         `PostgreSQL`, `MySQL`
-- *Storage*:      `S3`, `Filesystem`
+- *Storage*:      `S3`, `Filesystem`, `FTP`
 
 ## FAQ
-**Q:** What if I want to dump two or three MySQL databases?   
-*A:* Just add a `:MySQL:` block for every database you need to dump.   
+**Q:** What if I want to dump two or three MySQL databases?
+*A:* Just add a `:MySQL:` block for every database you need to dump.
 
 
-**Q:** What if I want to save a database to S3 and another one into my local filesystem?   
+**Q:** What if I want to save a database to S3 and another one into my local filesystem?
 *A:* Well, you can't. By design, every macro-block (like, `:DBMS:`) is unaware of the other ones. So, for instance, I couldn't ask `:Filesystem:` to work only for the first `:MySQL:` block since it actually does not know what a `:MySQL:` block is. You need just to create two configuration files.
