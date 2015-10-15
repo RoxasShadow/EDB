@@ -29,3 +29,8 @@ Consider also to add *EDB* to your cronjobs.
 
 **Q:** What if I want to save a database to S3 and another one into my local filesystem?   
 *A:* Well, you can't. By design, every macro-block (like, `:DBMS:`) is unaware of the other ones. So, for instance, I couldn't ask `:Filesystem:` to work only for the first `:MySQL:` block since it actually does not know what a `:MySQL:` block is. You need just to create two configuration files.
+
+
+
+**Q:** Is there something to run it automatically at every night? Let's say 2:30am   
+*A:* Cronjobs to the rescue. Append the following line to your `crontab -e`: ```30 2 * * * bash -l -c '`which edb` /home/deployer/edb.yml'```.
