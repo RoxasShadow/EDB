@@ -11,7 +11,7 @@ The first one deals with the actual backup process of your database. The second 
 `$ gem install edb`
 
 ## Run
-Setup and customize `example/edb.yml` (remember also to change the `secret`) and then:
+Setup and customize `example/edb.yml` (remember also to change the `secret` by running `edb -k`) and then:
 
 `$ edb example/edb.yml`
 
@@ -24,12 +24,11 @@ Consider also to add *EDB* to your cronjobs.
 
 ## FAQ
 **Q:** What if I want to dump two or three MySQL databases?   
-*A:* Just add a `:MySQL:` block for every database you need to dump.
+*A:* Just add a `:MySQL:` block for every database you need to dump.   
 
 
 **Q:** What if I want to save a database to S3 and another one into my local filesystem?   
 *A:* Well, you can't. By design, every macro-block (like, `:DBMS:`) is unaware of the other ones. So, for instance, I couldn't ask `:Filesystem:` to work only for the first `:MySQL:` block since it actually does not know what a `:MySQL:` block is. You need just to create two configuration files.
-
 
 
 **Q:** Is there something to run it automatically at every night? Let's say 2:30am   
