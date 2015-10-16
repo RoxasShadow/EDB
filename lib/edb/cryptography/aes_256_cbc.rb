@@ -32,13 +32,16 @@ module EDB
 
           cipher = OpenSSL::Cipher.new('AES-256-CBC')
           cipher.encrypt
+
           cipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
+          cipher.iv  = iv = cipher.random_iv
 
           contents = File.read(source)
           raise "Cannot encrypt #{source}: It's empty" if contents.empty?
 
           File.open(source, 'wb') do |file|
             ciphered_content = cipher.update(contents) + cipher.final
+            ciphered_content << iv
             file.write(ciphered_content)
           end
         end
@@ -46,16 +49,19 @@ module EDB
         def decrypt(source, new_file = true)
           ::EDB::Logger.log(:info, "Decrypting #{source}...")
 
+          ciphered_content = File.read(source)
+          raise "Cannot decrypt #{source}: It's empty" if ciphered_content.empty?
+          ciphered_content_length = ciphered_content.length
+
           decipher = OpenSSL::Cipher.new('AES-256-CBC')
           decipher.decrypt
-          decipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
 
-          contents = File.read(source)
-          raise "Cannot decrypt #{source}: It's empty" if contents.empty?
+          decipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
+          decipher.iv  = iv = ciphered_content.slice!(ciphered_content_length - 16, ciphered_content_length)
 
           new_source = new_file ? "#{source}.dec" : source
           File.open(new_source, 'wb') do |file|
-            deciphered_content = decipher.update(contents) + decipher.final
+            deciphered_content = decipher.update(ciphered_content) + decipher.final
             file.write(deciphered_content)
           end
         end
