@@ -26,8 +26,8 @@ module EDB
   class Dumper
     PATTERN = ->(time) { "#{time.day}_#{time.month}_#{time.year}" }
 
-    def initialize(opts)
-      ::EDB.opts = opts
+    def initialize(opts = nil)
+      ::EDB.opts ||= opts if opts
     end
 
     def run

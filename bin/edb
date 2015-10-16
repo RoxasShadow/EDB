@@ -26,15 +26,21 @@ require 'edb'
 require 'yaml'
 require 'optparse'
 
+@tasks = {}
+
 OptionParser.new do |opts|
   opts.version = EDB::VERSION
-  opts.banner  = "Usage: edb [-k] [file]"
+  opts.banner  = "Usage: edb [-kd] [CONFIG_FILE]"
 
   opts.on('-k', '--generate-key', 'Generate a random key of 32 characters') do
     require 'securerandom'
 
     puts SecureRandom.hex(32)
     exit
+  end
+
+  opts.on('-d', '--decrypt [FILE]', 'Decrypt given file') do |file|
+    @tasks[:decrypt] = { file_to_decrypt: File.expand_path(file) }
   end
 end.parse!
 
@@ -43,5 +49,11 @@ if !config_file || !config_file.end_with?('.yml') || !File.exists?(config_file)
   abort 'Please provide a valid configuration file.'
 end
 
-opts = YAML.load_file(config_file)
-EDB::Dumper.new(opts).run
+EDB.opts = YAML.load_file(config_file)
+
+if @tasks.has_key?(:decrypt)
+  ciphering_method = EDB.opts[:CRYPTOGRAPHY].first[0]
+  EDB::Cryptography.decrypt ciphering_method, @tasks[:decrypt][:file_to_decrypt]
+else
+  EDB::Dumper.new.run
+end

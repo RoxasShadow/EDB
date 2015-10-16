@@ -28,14 +28,34 @@ module EDB
     class << self
       include ::EDB::IsModuleSupported
 
-      def encrypt(method, file)
-        this_module = to_module(method)
-        this_module.encrypt(file)
+      def encrypt(method, filename)
+        ::EDB::Logger.log(:info, "Encrypting #{filename}...")
+
+        ciphered_data = File.open(filename, 'rb') do |file|
+          data = file.read
+
+          this_module   = to_module(method)
+          ciphered_data = this_module.encrypt(data)
+        end
+
+        File.open(filename, 'wb') do |file|
+          file.write(ciphered_data)
+        end
       end
 
-      def decrypt(method, file)
-        this_module = to_module(method)
-        this_module.decrypt(file)
+      def decrypt(method, filename)
+        ::EDB::Logger.log(:info, "Decrypting #{filename}...")
+
+        data = File.open(filename, 'rb') do |file|
+          ciphered_data = file.read
+
+          this_module = to_module(method)
+          data        = this_module.decrypt(ciphered_data)
+        end
+
+        File.open("#{filename}.dec", 'wb') do |file|
+          file.write(data)
+        end
       end
 
       private

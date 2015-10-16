@@ -23,52 +23,54 @@
 #++
 require 'openssl'
 require 'hkdf'
+require 'fast_secure_compare/fast_secure_compare'
 
 module EDB
   module Cryptography
     module AES_256_CBC
       class << self
-        def encrypt(source)
-          ::EDB::Logger.log(:info, "Encrypting #{source}...")
+        def encrypt(data)
+          raise "Cannot encrypt #{filename}: It's empty" if data.empty?
 
           cipher = OpenSSL::Cipher.new('AES-256-CBC')
           cipher.encrypt
-          cipher.key = hash_key(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
-          cipher.iv  = iv = cipher.random_iv
 
-          contents = File.read(source)
-          raise "Cannot encrypt #{source}: It's empty" if contents.empty?
+          cipher.key, authentication_key = hash_keychain(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
+          cipher.iv = iv = cipher.random_iv
 
-          File.open(source, 'wb') do |file|
-            ciphered_content = cipher.update(contents) + cipher.final
-            ciphered_content << iv
-            file.write(ciphered_content)
-          end
+          ciphered_data = cipher.update(data) + cipher.final
+          ciphered_data << iv
+
+          authentication = OpenSSL::HMAC.digest(OpenSSL::Digest.new('SHA256'), authentication_key, ciphered_data)
+          ciphered_data << authentication
         end
 
-        def decrypt(source, new_file = true)
-          ::EDB::Logger.log(:info, "Decrypting #{source}...")
-
-          ciphered_content = File.read(source)
-          raise "Cannot decrypt #{source}: It's empty" if ciphered_content.empty?
-          ciphered_content_length = ciphered_content.length
+        def decrypt(ciphered_data)
+          raise "Cannot decrypt #{filename}: It's empty" if ciphered_data.length < 64
 
           decipher = OpenSSL::Cipher.new('AES-256-CBC')
           decipher.decrypt
 
-          decipher.key = hash_key(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
-          decipher.iv  = iv = ciphered_content.slice!(ciphered_content_length - 16, ciphered_content_length)
+          authentication = slice_str!(ciphered_data, 32)
+          decipher.key, authentication_key = hash_keychain(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
 
-          new_source = new_file ? "#{source}.dec" : source
-          File.open(new_source, 'wb') do |file|
-            deciphered_content = decipher.update(ciphered_content) + decipher.final
-            file.write(deciphered_content)
-          end
+          new_authentication = OpenSSL::HMAC.digest(OpenSSL::Digest.new('SHA256'), authentication_key, ciphered_data)
+          raise 'Authentication failed.' unless FastSecureCompare.compare(authentication, new_authentication)
+
+          decipher.iv = slice_str!(ciphered_data, 16)
+
+          deciphered_data = decipher.update(ciphered_data) + decipher.final
         end
 
         private
-        def hash_key(s)
-          HKDF.new(s).next_bytes(32)
+        def slice_str!(str, n)
+          len = str.length
+          str.slice!(len - n, len)
+        end
+
+        def hash_keychain(s)
+          hkdf = HKDF.new(s)
+          [ hkdf.next_bytes(64), hkdf.next_bytes(64) ]
         end
       end
     end
