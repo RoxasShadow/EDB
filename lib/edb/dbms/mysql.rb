@@ -33,8 +33,17 @@ module EDB
           }
 
           ::EDB::Logger.log(:info, "Dumping #{db[:database]}...")
+
           mysqldump = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'mysqldump') : 'mysqldump'
-          system "#{mysqldump} -u #{db[:username]} --password=#{db[:password]} --default-character-set=utf8 #{db[:database]} > #{files[:dump]}"
+
+          args = %W{
+            --user=#{db[:username]}
+            --password=#{db[:password]}
+            --single-transaction
+            #{db[:database]} > #{files[:dump]}
+          }.join(' ')
+
+          system "#{mysqldump} #{args}"
 
           files.values
         end
