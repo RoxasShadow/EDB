@@ -24,6 +24,19 @@
 #++
 require 'edb'
 require 'yaml'
+require 'optparse'
+
+OptionParser.new do |opts|
+  opts.version = EDB::VERSION
+  opts.banner  = "Usage: edb [-k] [file]"
+
+  opts.on('-k', '--generate-key', 'Generate a random key of 32 characters') do
+    require 'securerandom'
+
+    puts SecureRandom.hex(32)
+    exit
+  end
+end.parse!
 
 config_file = ARGV[0]
 if !config_file || !config_file.end_with?('.yml') || !File.exists?(config_file)
