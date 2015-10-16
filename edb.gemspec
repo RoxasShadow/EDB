@@ -15,6 +15,7 @@ Gem::Specification.new { |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency 'aws-sdk', '1.59.1'
+  s.add_dependency 'aws-sdk',  '1.59.1'
   s.add_dependency 'ftp_sync', '~> 0.4'
+  s.add_dependency 'hkdf',     '~> 0.2'
 }
