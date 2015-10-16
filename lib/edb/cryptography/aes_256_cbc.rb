@@ -22,6 +22,7 @@
 # or implied, of Giovanni Capuano.
 #++
 require 'openssl'
+require 'hkdf'
 
 module EDB
   module Cryptography
@@ -32,7 +33,7 @@ module EDB
 
           cipher = OpenSSL::Cipher.new('AES-256-CBC')
           cipher.encrypt
-          cipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
+          cipher.key = hash_key(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
 
           contents = File.read(source)
           raise "Cannot encrypt #{source}: It's empty" if contents.empty?
@@ -48,7 +49,7 @@ module EDB
 
           decipher = OpenSSL::Cipher.new('AES-256-CBC')
           decipher.decrypt
-          decipher.key = ::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret]
+          decipher.key = hash_key(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
 
           contents = File.read(source)
           raise "Cannot decrypt #{source}: It's empty" if contents.empty?
@@ -58,6 +59,11 @@ module EDB
             deciphered_content = decipher.update(contents) + decipher.final
             file.write(deciphered_content)
           end
+        end
+
+        private
+        def hash_key(s)
+          HKDF.new(s).next_bytes(32)
         end
       end
     end
