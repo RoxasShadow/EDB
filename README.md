@@ -11,9 +11,13 @@ The first one deals with the actual backup process of your database. The second 
 `$ gem install edb`
 
 ## Run
-Setup and customize `example/edb.yml` (remember also to change the `secret` by running `edb -k`) and then:
+Customize `example/edb.yml` (remember also to change the `secret` by running `$ edb -k`) and then:
 
 `$ edb example/edb.yml`
+
+To decrypt the encrypted files:
+
+`$ edb example/edb.yml -d [FILE]`
 
 Consider also to add *EDB* to your cronjobs.
 
@@ -24,7 +28,7 @@ Consider also to add *EDB* to your cronjobs.
 
 ## FAQ
 **Q:** What if I want to dump two or three MySQL databases?   
-*A:* Just add a `:MySQL:` block for every database you need to dump.   
+*A:* Just add a `:MySQL:` block for every database you need to dump.
 
 
 **Q:** What if I want to save a database to S3 and another one into my local filesystem?   

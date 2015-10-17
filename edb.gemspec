@@ -18,4 +18,5 @@ Gem::Specification.new { |s|
   s.add_dependency 'aws-sdk',  '1.59.1'
   s.add_dependency 'ftp_sync', '~> 0.4'
   s.add_dependency 'hkdf',     '~> 0.2'
+  s.add_dependency 'fast_secure_compare', '~> 1.0'
 }
