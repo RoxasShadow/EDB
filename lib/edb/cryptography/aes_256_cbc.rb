@@ -70,7 +70,7 @@ module EDB
 
         def hash_keychain(s)
           hkdf = HKDF.new(s)
-          [ hkdf.next_bytes(64), hkdf.next_bytes(64) ]
+          [ hkdf.next_bytes(32), hkdf.next_bytes(64) ]
         end
       end
     end
