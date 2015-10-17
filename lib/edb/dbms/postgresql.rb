@@ -35,11 +35,11 @@ module EDB
 
           ::EDB::Logger.log(:info, "Dumping #{db[:database]}...")
           pg_dump = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dump') : 'pg_dump'
-          system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{db[:database]}"
+          Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{db[:database]}"
 
           ::EDB::Logger.log(:info, 'Dumping the cluster...')
           pg_dumpall = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dumpall') : 'pg_dumpall'
-          system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
+          Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
 
           files.values
         end
