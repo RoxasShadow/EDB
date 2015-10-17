@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    edb (0.6)
+    edb (0.6.1)
       aws-sdk (= 1.59.1)
       fast_secure_compare (~> 1.0)
       ftp_sync (~> 0.4)
