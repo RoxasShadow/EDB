@@ -13,7 +13,7 @@ end
 
 task :test do
   FileUtils.cd 'specs' do
-    Dir['*_spec.rb'].each do |spec|
+    Dir['./**/*_spec.rb'].each do |spec|
       sh "rspec #{spec} --backtrace --color --format doc"
     end
   end

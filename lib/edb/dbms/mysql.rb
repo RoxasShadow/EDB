@@ -43,7 +43,7 @@ module EDB
             #{db[:database]} > #{files[:dump]}
           }.join(' ')
 
-          system "#{mysqldump} #{args}"
+          Kernel.system "#{mysqldump} #{args}"
 
           files.values
         end
