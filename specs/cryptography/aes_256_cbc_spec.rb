@@ -45,13 +45,4 @@ describe EDB::Cryptography::AES_256_CBC do
       expect(str).to    eq 'senjou'
     end
   end
-
-  describe '#hash_keychain' do
-    let(:keychain) { EDB::Cryptography::AES_256_CBC.instance_eval { hash_keychain('hitagi') } }
-
-    it 'returns an array with two 64 bytes long keys' do
-      expect(keychain[0].length).to be 64
-      expect(keychain[1].length).to be 64
-    end
-  end
 end

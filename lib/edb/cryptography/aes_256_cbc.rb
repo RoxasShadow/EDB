@@ -35,8 +35,10 @@ module EDB
           cipher = OpenSSL::Cipher.new('AES-256-CBC')
           cipher.encrypt
 
-          cipher.key, authentication_key = hash_keychain(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
-          cipher.iv = iv = cipher.random_iv
+          hkdf = HKDF.new(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
+          cipher.key         = hkdf.next_bytes(32)
+          authentication_key = hkdf.next_bytes(64)
+          cipher.iv     = iv = cipher.random_iv
 
           ciphered_data = cipher.update(data) + cipher.final
           ciphered_data << iv
@@ -52,7 +54,10 @@ module EDB
           decipher.decrypt
 
           authentication = slice_str!(ciphered_data, 32)
-          decipher.key, authentication_key = hash_keychain(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
+
+          hkdf = HKDF.new(::EDB.opts[:CRYPTOGRAPHY][:AES_256_CBC][:secret])
+          decipher.key       = hkdf.next_bytes(32)
+          authentication_key = hkdf.next_bytes(64)
 
           new_authentication = OpenSSL::HMAC.digest(OpenSSL::Digest.new('SHA256'), authentication_key, ciphered_data)
           raise 'Authentication failed.' unless FastSecureCompare.compare(authentication, new_authentication)
@@ -66,11 +71,6 @@ module EDB
         def slice_str!(str, n)
           len = str.length
           str.slice!(len - n, len)
-        end
-
-        def hash_keychain(s)
-          hkdf = HKDF.new(s)
-          [ hkdf.next_bytes(32), hkdf.next_bytes(64) ]
         end
       end
     end
