@@ -29,33 +29,28 @@ module EDB
         def backup(dir_name)
           db    = ::EDB.opts[:DBMS][:PostgreSQL]
           files = {
-            dump:    File.join(dir_name, "#{db[:database]}.sql")
+            dump: File.join(dir_name, "#{db[:database]}.sql")
           }
-          if db[:include_cluster]
-            files[:cluster] = File.join(dir_name, 'cluster.sql')
-          end
-
-          if db[:only_tables]
-            only_tables = db[:only_tables].map{|t| "-t #{t}" }.join(" ")
-          end
-
-          if db[:exclude_tables]
-            exclude_tables = db[:exclude_tables].map{|t| "-T #{t}" }.join(" ")
-          end
-
 
           ::EDB::Logger.log(:info, "Dumping #{db[:database]}...")
+
+          only_tables    = (db[:only_tables]    || []).reject(&:empty?).map { |t| "-t #{t}" }.join(' ')
+          exclude_tables = (db[:exclude_tables] || []).reject(&:empty?).map { |t| "-T #{t}" }.join(' ')
+
           pg_dump = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dump') : 'pg_dump'
           Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{only_tables} #{exclude_tables} #{db[:database]}"
 
-          if db[:include_cluster]
+          if db[:include_cluster] == true
             ::EDB::Logger.log(:info, 'Dumping the cluster...')
+
+            files[:cluster] = File.join(dir_name, 'cluster.sql')
             pg_dumpall = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dumpall') : 'pg_dumpall'
             Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
           end
 
-          if db[:run_sql_after_backup]
-            ::EDB::Logger.log(:info, 'Run sql after backup...')
+          if db[:run_sql_after_backup] && File.exists?(db[:run_sql_after_backup])
+            ::EDB::Logger.log(:info, "Executing #{File.basename(db[:run_sql_after_backup])}...")
+
             psql = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'psql') : 'psql'
             Kernel.system "PGPASSWORD='#{db[:password]}' #{psql} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -d #{db[:database]} -f #{db[:run_sql_after_backup]}"
           end
