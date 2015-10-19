@@ -29,17 +29,29 @@ module EDB
         def backup(dir_name)
           db    = ::EDB.opts[:DBMS][:PostgreSQL]
           files = {
-            dump:    File.join(dir_name, "#{db[:database]}.sql"),
-            cluster: File.join(dir_name, 'cluster.sql')
+            dump:    File.join(dir_name, "#{db[:database]}.sql")
           }
+          if db[:backup_all_cluster]
+            files[:cluster] = File.join(dir_name, 'cluster.sql')
+          end
+
+          if db[:only_tables]
+            only_tables = db[:only_tables].map{|t| " -t #{t} " }.join
+          end
+
+          if db[:without_tables]
+            without_tables = db[:without_tables].map{|t| " -T #{t} " }.join
+          end
 
           ::EDB::Logger.log(:info, "Dumping #{db[:database]}...")
           pg_dump = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dump') : 'pg_dump'
-          Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{db[:database]}"
+          Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dump} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -F c -b -f '#{files[:dump]}' #{only_tables} #{without_tables} #{db[:database]}"
 
-          ::EDB::Logger.log(:info, 'Dumping the cluster...')
-          pg_dumpall = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dumpall') : 'pg_dumpall'
-          Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
+          if db[:backup_all_cluster]
+            ::EDB::Logger.log(:info, 'Dumping the cluster...')
+            pg_dumpall = db[:binpath] && !db[:binpath].empty? ? File.join(db[:binpath], 'pg_dumpall') : 'pg_dumpall'
+            Kernel.system "PGPASSWORD='#{db[:password]}' #{pg_dumpall} -h #{db[:host]} -p #{db[:port]} -U #{db[:username]} -f '#{files[:cluster]}'"
+          end
 
           files.values
         end

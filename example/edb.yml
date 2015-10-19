@@ -7,6 +7,10 @@
     :database: sample_database
     :host: localhost
     :port: 5432
+    :only_tables: ['table1', 'table2']
+    :without_tables: ['table1', 'table2']
+    :run_sql_after_backup: ~/Documents/clear_some_tables_after_backup.sql
+    :backup_all_cluster: false
 
   :MySQL:
     :binpath: /Applications/MAMP/Library/bin
