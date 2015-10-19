@@ -7,10 +7,10 @@
     :database: sample_database
     :host: localhost
     :port: 5432
-    :only_tables: ['table1', 'table2']
-    :without_tables: ['table1', 'table2']
+    :only_tables: ['table_name_only_included_in_backup']
+    :exclude_tables: ['table_name_excluded_in_backup']
     :run_sql_after_backup: ~/Documents/clear_some_tables_after_backup.sql
-    :backup_all_cluster: true
+    :include_cluster: true
 
   :MySQL:
     :binpath: /Applications/MAMP/Library/bin
