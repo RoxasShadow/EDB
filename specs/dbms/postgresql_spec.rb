@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe EDB::DBMS::PostgreSQL do
   describe '#backup' do
-    let(:dump)    { "PGPASSWORD='password' /Applications/Postgres.app/Contents/Versions/9.3/bin/pg_dump -h localhost -p 5432 -U username -F c -b -f './sample_database.sql' sample_database" }
+    let(:dump)    { "PGPASSWORD='password' /Applications/Postgres.app/Contents/Versions/9.3/bin/pg_dump -h localhost -p 5432 -U username -F c -b -f './sample_database.sql'  -t table1  -t table2   -T table1  -T table2  sample_database" }
     let(:cluster) { "PGPASSWORD='password' /Applications/Postgres.app/Contents/Versions/9.3/bin/pg_dumpall -h localhost -p 5432 -U username -f './cluster.sql'" }
 
     it 'calls pg_dump correctly' do
